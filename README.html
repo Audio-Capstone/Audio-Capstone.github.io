@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="generator" content="Pelican" />
+        <title>Audio Capstone Summary</title>
+        <link rel="stylesheet" href="https://Audio-Capstone.github.io/theme/css/main.css" />
+        <link href="https://Audio-Capstone.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Audio Capstone Blog Atom Feed" />
+        <meta name="description" content="Descrition of project from beginning to end." />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="https://Audio-Capstone.github.io/">Audio Capstone Blog</a></h1>
+                <nav><ul>
+                    <li class="active"><a href="https://Audio-Capstone.github.io/category/speaker-detection.html">speaker detection</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="https://Audio-Capstone.github.io/README.html" rel="bookmark"
+           title="Permalink to Audio Capstone Summary">Audio Capstone Summary</a></h1>
+    </header>
+
+    <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2022-05-15T12:20:00-04:00">
+                Published: Sun 15 May 2022
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="https://Audio-Capstone.github.io/author/scott-petersen-and-daniel-babcock.html">Scott Petersen and Daniel Babcock</a>
+        </address>
+<p>In <a href="https://Audio-Capstone.github.io/category/speaker-detection.html">speaker detection</a>.</p>
+<p>tags: <a href="https://Audio-Capstone.github.io/tag/python-audio.html">python audio</a> </p>
+</footer><!-- /.post-info -->      <h1>speech_recognition</h1>
+<p>UMBC DATA 606 Capstone Project</p>
+<p>Audio data is a fascinating topic that neither of us have delved into before. While we have used machine learning for image classification and other tasks, we have not tackled any projects dealing with sound.</p>
+<p>In particular, we want to explore what it takes to process data on voices and recognize particular speakers.</p>
+<p>In our research, we have found several methods for doing this, but we'd like to focus on applying Deep Learning methods to see what we can accomplish with some of the latest technology.</p>
+<h2>Goals and Objectives:</h2>
+<p>The primary goal of this project is to learn more about sound, how we perceive it as humans, and how we extract and process features from it so that a computer-based model can understand it and make decisions based off of it.</p>
+<p>We also have the following objectives as part of our course:</p>
+<p>Demonstrate:
+    Proficiency in managing a full life-cycle data science project 
+    Effective communication and presentation skills
+    Competence in preparing insightful visualizations 
+    Competence in writing an article</p>
+<h2>Caveats:</h2>
+<p>For any packages not found on your system, you may need to install them prior to running our Python scripts. One method of doing this is:</p>
+<div class="highlight"><pre><span></span><code>pip3 install &lt;package name&gt;
+</code></pre></div>
+
+<p>On my RHEL 8 box, I also had to download ffmeg binary and add it to my class path. It can be downloaded from:
+https://www.ffmpeg.org/download.html</p>
+<h2>Getting Started</h2>
+<p>Navigate to, and run the 'data_processing' notebook or follow steps below to get started via the command line.</p>
+<h2>Obtaining the Data:</h2>
+<p>To build our voice recognition model, we have decided to use the following public dataset:</p>
+<p>https://media.talkbank.org/ca/CallFriend/eng-n/0wav/</p>
+<p>This dataset is comprised of 31 phone conversations and is ~764 MBs in size.</p>
+<p>Given its size, we have decided not to upload it to GitHub and have written a script to download the data to a local drive:</p>
+<p>To download the files, run the following command in the repository:</p>
+<div class="highlight"><pre><span></span><code>python3 get_voice_data.py
+</code></pre></div>
+
+<h2>Exploring the Data:</h2>
+<p>We have 31 voice files, each one a phone conversation with at least 2 speakers. In some conversations, there are periods where other speakers are present. This represents a problem for our project and for putting a system like this into production since we cannot be sure that our audio file will only contain data for 1 unique speaker.</p>
+<p>The conversations were recorded in stereo, meaning there are 2 channels in each file. Each channel corresponds to half of the phone conversation. These channels will need to be split in processing into mono channels.</p>
+<p>All of the audio was sampled at a rate of 8kHz. (For reference: CDs are traditionally sampled at 44.1kHz) Generally, higher sampling rate = better quality sound, but for voice data 8kHz should capture all the relevant frequencies we need and takes up less memory. For now, I think we'll stick with 8kHz.</p>
+<p>The length of the recordings range from a little less than 8 minutes to a max of 30 minutes. We'll need to be sure we have enough data for each speaker, so some of these may need to be cut if there is not enough data.</p>
+<p>There is background noise in the conversations that will likely need to be suppressed or removed in processing so that we focus on features of the voices as much as possible.</p>
+<p>There will be a lot of silence that needs to be removed from the files once they are split into separate channels since when one side is talking the other is not, thus producing a period of silence in the mono channel.</p>
+<h2>Processing the Data:</h2>
+<p>The data we are using is in stereo, so we needed to split the audio into its separate left and right channels.</p>
+<p>We have written a script to do this that can be run with the following command:</p>
+<div class="highlight"><pre><span></span><code>python3 split_stereo_audio.py
+</code></pre></div>
+
+<p>SECTION FOR REMOVING NOISE </p>
+<p>Next, the periods of silence are removed from each of these files using:</p>
+<div class="highlight"><pre><span></span><code>python3 remove_silence.py
+</code></pre></div>
+
+<h2>Road Map:</h2>
+<p>Continue optimizing preprocessing functions to get clean data.</p>
+<p>Extract most important features from the data.</p>
+<p>Begin training a model on the data and get preliminary results.</p>
+<p>Finalizing project:</p>
+<div class="highlight"><pre><span></span><code><span class="n">When</span><span class="w"> </span><span class="n">various</span><span class="w"> </span><span class="n">audio</span><span class="w"> </span><span class="n">processing</span><span class="w"> </span><span class="n">functions</span><span class="w"> </span><span class="n">are</span><span class="w"> </span><span class="n">ready</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">combined</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">create</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">preprocessing</span><span class="w"> </span><span class="n">pipeline</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">audio</span><span class="w"> </span><span class="n">data</span><span class="p">:</span><span class="w"></span>
+
+<span class="w">    </span><span class="mf">1.</span><span class="w"> </span><span class="n">Convert</span><span class="w"> </span><span class="n">audio</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="o">.</span><span class="n">wav</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">necessary</span><span class="w"></span>
+<span class="w">    </span><span class="mf">2.</span><span class="w"> </span><span class="n">Resample</span><span class="w"> </span><span class="n">using</span><span class="w"> </span><span class="n">sampling</span><span class="w"> </span><span class="n">rate</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">our</span><span class="w"> </span><span class="n">dataset</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="n">kHz</span><span class="w"></span>
+<span class="w">    </span><span class="mf">3.</span><span class="w"> </span><span class="n">Split</span><span class="w"> </span><span class="n">stereo</span><span class="w"> </span><span class="n">channels</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">mono</span><span class="w"></span>
+<span class="w">    </span><span class="mf">4.</span><span class="w"> </span><span class="n">Remove</span><span class="w"> </span><span class="n">background</span><span class="w"> </span><span class="n">noise</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">audio</span><span class="w"></span>
+<span class="w">    </span><span class="mf">5.</span><span class="w"> </span><span class="n">Remove</span><span class="w"> </span><span class="n">periods</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">silence</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">audio</span><span class="w"></span>
+</code></pre></div>
+
+<h2>References:</h2>
+<p>Librosa blog on resampling:</p>
+<p>https://librosa.org/blog/2019/07/17/resample-on-load/</p>
+<p>Amazing series of YouTube videos on audio processing:</p>
+<p>https://www.youtube.com/watch?v=iCwMQJnKk2c&amp;list=PL-wATfeyAMNqIee7cH3q1bh4QJFAaeNv0</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+                <div class="blogroll">
+                        <h2>links</h2>
+                        <ul>
+                            <li><a href="https://getpelican.com/">Pelican</a></li>
+                            <li><a href="https://www.python.org/">Python.org</a></li>
+                            <li><a href="https://palletsprojects.com/p/jinja/">Jinja2</a></li>
+                            <li><a href="#">You can modify those links in your config file</a></li>
+                        </ul>
+                </div><!-- /.blogroll -->
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+                            <li><a href="https://Audio-Capstone.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate">atom feed</a></li>
+
+                            <li><a href="#">You can add links in your config file</a></li>
+                            <li><a href="#">Another social link</a></li>
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="https://getpelican.com/">Pelican</a>, which takes great advantage of <a href="https://www.python.org/">Python</a>.
+                </address><!-- /#about -->
+
+                <p>The theme is by <a href="https://www.smashingmagazine.com/2009/08/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+        </footer><!-- /#contentinfo -->
+
+</body>
+</html>
