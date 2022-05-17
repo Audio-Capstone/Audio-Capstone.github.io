@@ -19,7 +19,206 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="https://Audio-Capstone.github.io/README.html">Audio Capstone Summary</a></h1>
+                    <h1 class="entry-title"><a href="https://Audio-Capstone.github.io/blog_post.html">Speaker Detection Blog</a></h1>
+<footer class="post-info">
+        <abbr class="published" title="2022-05-16T18:55:00-04:00">
+                Published: Mon 16 May 2022
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="https://Audio-Capstone.github.io/author/scott-petersen-and-daniel-babcock.html">Scott Petersen and Daniel Babcock</a>
+        </address>
+<p>In <a href="https://Audio-Capstone.github.io/category/speaker-detection.html">speaker detection</a>.</p>
+<p>tags: <a href="https://Audio-Capstone.github.io/tag/python-audio.html">python audio</a> </p>
+</footer><!-- /.post-info --><p>{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "7a569de7-f323-4f80-9494-e03480ad659b",
+   "metadata": {},
+   "source": [
+    "# Exploring the world of Audio Data"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9b762844-e946-4ec7-8d2c-df8fc00b0196",
+   "metadata": {},
+   "source": [
+    "## By: Scott Petersen and Daniel Babcock"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "09f687bd-e780-4425-8b69-ffcd70905d87",
+   "metadata": {},
+   "source": [
+    "## Introduction"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ec8340cd-c58a-4c6a-9dca-dc56ef4a1a44",
+   "metadata": {},
+   "source": [
+    "        Scott and I had never worked with audio data before and had certainly not used it in a machine learning projects in the past. This was what initially drew our interest in this project. That and the fact that audio information is a growing field of application for machine learning. Whether its generating text from speech or interacting with a customer service chatbot over the phone, there are countless ways to use audio data to make our lives easier (maybe not the customer service chatbots though, those are awful). One of the most interesting ways to use audio data is recognizing the unique features of a particular person’s voice. We take the ability to recognize voices for granted, and it’s amazing the progress that have been made with allowing computers to do the same. Scott and I both wanted to better understand what was going on in those kinds of systems, so we decided to tackle Speaker Identification for our capstone project."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3fe7ff8f-496d-4761-8ea0-13793fc78b2d",
+   "metadata": {},
+   "source": [
+    "## Initial Research and Picking a Dataset"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2ff66956-1ce4-4ed8-acba-54b4744e548f",
+   "metadata": {},
+   "source": [
+    "        We began our journey with a lot of reading and watching helpful videos on the subject. The Sound of AI channel on YouTube was a particularly awesome resource with a very detailed series of videos on using Audio Data for Machine Learning. Once we had a basic grasp of what needed to be done, we decided on a publicly-available dataset comprised of 31 phone calls available here: Index of /ca/CallFriend/eng-n/0wav (talkbank.org). These 31 phone calls would presumably represent at least 62 speakers (one for each side of the conversation). We believed this data would present some interesting real-world challenges since phone calls can pick up environmental noise and vary in quality based on the equipment being used."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "76aaf8e5-bcb1-4d70-be1c-70eff515fd38",
+   "metadata": {},
+   "source": [
+    "## Exploratory Data Analysis and Potential Issues"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "52bc3184-fe7c-4b91-99c4-b49d5106dd3a",
+   "metadata": {},
+   "source": [
+    "        With our dataset decided on, we began exploring it to get an idea of what kind of cleaning would be necessary. We realized that our data would need a lot of cleaning before we could extract any useful features from it. Primarily splitting the stereo data into individual channels, reducing noise, and removing periods of silence. We also identified a couple major issues that would not be easy to automatically fix such as multiple people talking on one side of the conversation for extended periods of time and some calls that were much shorter than others. We also wanted to create a test dataset that we would not touch until our final model was chosen. This represented 15% of our data for each speaker."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1c06d188-dcea-478d-b717-876ce7394807",
+   "metadata": {},
+   "source": [
+    "## Early Feature Extraction and a Doomed Attempt at Deep Learning"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "712ae7ed-7692-439e-87c0-a8bd2f70aad0",
+   "metadata": {},
+   "source": [
+    "        Once we had basic preprocessing completed (splitting stereo channels, reducing noise, removing periods of silence, and creating a holdout test dataset) we began to extract some features such as Mel-frequency cepstrum coefficients (MFCCs) with the goal of applying them to some early deep learning methods. While we had read that GMMs were considered the best way to identify speakers for some time (Reynolds, 2000), we thought a deep learning approach would be interesting and a good learning opportunity. Unfortunately, the initial results were abysmal, and we were not able to achieve any decent scores on the validation test sets."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "312a833a-5d05-4829-abcf-246c74ec3b1f",
+   "metadata": {},
+   "source": [
+    "## Focusing on a GMM Solution"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1944e88a-2be4-496a-ab9d-7f952d64071b",
+   "metadata": {},
+   "source": [
+    "        Given the deep learning setback, we decided to focus on using the GMM solution we had initially researched. This involved training a separate GMM for each of our 62 speakers and then testing audio samples against each of the models. We used several features to train the GMMs, including:\n",
+    "\n",
+    "    •\tMel-frequency cepstrum coefficients (MFCCs)\n",
+    "    •\t1st and 2nd order Delta MFCCs (26, 13x2)\n",
+    "    •\tFrame Root Mean Square\n",
+    "    •\tSpectral Centroid\n",
+    "    •\tZero Crossing Rate\n",
+    "\n",
+    "    We also needed to optimize our GMM models, so we used the average BIC and AIC scores of the 62 models to determine which value to use for the n_component parameter. We decided 3 would be the best choice based on the results.\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b6ec5135-f4eb-4820-9566-817ed4f8af9f",
+   "metadata": {},
+   "source": [
+    "## GMM Solution Evaluation"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f2bf93bf-fb7f-4d7b-804c-8256234d1f90",
+   "metadata": {},
+   "source": [
+    "        With our model trained and tested, we did a final evaluation of the results on our 15% hold out test dataset. The results were pleasantly surprising, and after removing the results for one speaker for whom we didn’t have enough data, we were able to accurately identify 40 out of 61 of our speakers achieving an accuracy of 65.8%. Considering the challenges present in our dataset and our nascent understanding of audio data, we were encouraged by the fact that our models was able to perform as well as it did."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "aeddf3d2-0a33-4310-8bf0-fb81c60e455e",
+   "metadata": {},
+   "source": [
+    "## Next Steps"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d8f2b679-a8f2-4e84-ad07-2ac658d1cc40",
+   "metadata": {},
+   "source": [
+    "        While we have only really begun to scratch the surface of all there is to know about this field, we learned a lot while we worked on this project and are eager to continue exploring the world of audio data.  Some of the things we would like to focus on next for this project include:\n",
+    "        \n",
+    "    •\tPerform speaker diarization to separate out individual speakers in the same audio sample\n",
+    "    •\tExploring new pre-processing techniques to better deal with periods of silence and noise\n",
+    "    •\tTraining a speaker-independent Universal Background Model (UBM) to be our “unknown speaker” model (if you don’t match any of the knowns, you should match this one)\n",
+    "    •\tTurn the preprocessing and modeling into a pipeline that can be made into an API\n",
+    "    \n",
+    "    Overall, this was an enjoyable foray into a field that neither of us had any experience in. While we ran into a lot of problems and experienced several setbacks, we came away with an appreciation for audio data and a better understanding of the data science process.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "990af6e9-8ed0-4687-9aba-8a6743d0f5e6",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.7"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}</p>                </article>
+            </aside><!-- /#featured -->
+                <section id="content" class="body">
+                    <h1>Other articles</h1>
+                    <hr />
+                    <ol id="posts-list" class="hfeed">
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="https://Audio-Capstone.github.io/README.html" rel="bookmark"
+                           title="Permalink to Audio Capstone Summary">Audio Capstone Summary</a></h1>
+                </header>
+
+                <div class="entry-content">
 <footer class="post-info">
         <abbr class="published" title="2022-05-15T12:20:00-04:00">
                 Published: Sun 15 May 2022
@@ -30,79 +229,10 @@
         </address>
 <p>In <a href="https://Audio-Capstone.github.io/category/speaker-detection.html">speaker detection</a>.</p>
 <p>tags: <a href="https://Audio-Capstone.github.io/tag/python-audio.html">python audio</a> </p>
-</footer><!-- /.post-info --><h1>speech_recognition</h1>
-<p>UMBC DATA 606 Capstone Project</p>
-<p>Audio data is a fascinating topic that neither of us have delved into before. While we have used machine learning for image classification and other tasks, we have not tackled any projects dealing with sound.</p>
-<p>In particular, we want to explore what it takes to process data on voices and recognize particular speakers.</p>
-<p>In our research, we have found several methods for doing this, but we'd like to focus on applying Deep Learning methods to see what we can accomplish with some of the latest technology.</p>
-<h2>Goals and Objectives:</h2>
-<p>The primary goal of this project is to learn more about sound, how we perceive it as humans, and how we extract and process features from it so that a computer-based model can understand it and make decisions based off of it.</p>
-<p>We also have the following objectives as part of our course:</p>
-<p>Demonstrate:
-    Proficiency in managing a full life-cycle data science project 
-    Effective communication and presentation skills
-    Competence in preparing insightful visualizations 
-    Competence in writing an article</p>
-<h2>Caveats:</h2>
-<p>For any packages not found on your system, you may need to install them prior to running our Python scripts. One method of doing this is:</p>
-<div class="highlight"><pre><span></span><code>pip3 install &lt;package name&gt;
-</code></pre></div>
-
-<p>On my RHEL 8 box, I also had to download ffmeg binary and add it to my class path. It can be downloaded from:
-https://www.ffmpeg.org/download.html</p>
-<h2>Getting Started</h2>
-<p>Navigate to, and run the 'data_processing' notebook or follow steps below to get started via the command line.</p>
-<h2>Obtaining the Data:</h2>
-<p>To build our voice recognition model, we have decided to use the following public dataset:</p>
-<p>https://media.talkbank.org/ca/CallFriend/eng-n/0wav/</p>
-<p>This dataset is comprised of 31 phone conversations and is ~764 MBs in size.</p>
-<p>Given its size, we have decided not to upload it to GitHub and have written a script to download the data to a local drive:</p>
-<p>To download the files, run the following command in the repository:</p>
-<div class="highlight"><pre><span></span><code>python3 get_voice_data.py
-</code></pre></div>
-
-<h2>Exploring the Data:</h2>
-<p>We have 31 voice files, each one a phone conversation with at least 2 speakers. In some conversations, there are periods where other speakers are present. This represents a problem for our project and for putting a system like this into production since we cannot be sure that our audio file will only contain data for 1 unique speaker.</p>
-<p>The conversations were recorded in stereo, meaning there are 2 channels in each file. Each channel corresponds to half of the phone conversation. These channels will need to be split in processing into mono channels.</p>
-<p>All of the audio was sampled at a rate of 8kHz. (For reference: CDs are traditionally sampled at 44.1kHz) Generally, higher sampling rate = better quality sound, but for voice data 8kHz should capture all the relevant frequencies we need and takes up less memory. For now, I think we'll stick with 8kHz.</p>
-<p>The length of the recordings range from a little less than 8 minutes to a max of 30 minutes. We'll need to be sure we have enough data for each speaker, so some of these may need to be cut if there is not enough data.</p>
-<p>There is background noise in the conversations that will likely need to be suppressed or removed in processing so that we focus on features of the voices as much as possible.</p>
-<p>There will be a lot of silence that needs to be removed from the files once they are split into separate channels since when one side is talking the other is not, thus producing a period of silence in the mono channel.</p>
-<h2>Processing the Data:</h2>
-<p>The data we are using is in stereo, so we needed to split the audio into its separate left and right channels.</p>
-<p>We have written a script to do this that can be run with the following command:</p>
-<div class="highlight"><pre><span></span><code>python3 split_stereo_audio.py
-</code></pre></div>
-
-<p>SECTION FOR REMOVING NOISE </p>
-<p>Next, the periods of silence are removed from each of these files using:</p>
-<div class="highlight"><pre><span></span><code>python3 remove_silence.py
-</code></pre></div>
-
-<h2>Road Map:</h2>
-<p>Continue optimizing preprocessing functions to get clean data.</p>
-<p>Extract most important features from the data.</p>
-<p>Begin training a model on the data and get preliminary results.</p>
-<p>Finalizing project:</p>
-<div class="highlight"><pre><span></span><code><span class="n">When</span><span class="w"> </span><span class="n">various</span><span class="w"> </span><span class="n">audio</span><span class="w"> </span><span class="n">processing</span><span class="w"> </span><span class="n">functions</span><span class="w"> </span><span class="n">are</span><span class="w"> </span><span class="n">ready</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">combined</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">create</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">preprocessing</span><span class="w"> </span><span class="n">pipeline</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">audio</span><span class="w"> </span><span class="n">data</span><span class="p">:</span><span class="w"></span>
-
-<span class="w">    </span><span class="mf">1.</span><span class="w"> </span><span class="n">Convert</span><span class="w"> </span><span class="n">audio</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="o">.</span><span class="n">wav</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">necessary</span><span class="w"></span>
-<span class="w">    </span><span class="mf">2.</span><span class="w"> </span><span class="n">Resample</span><span class="w"> </span><span class="n">using</span><span class="w"> </span><span class="n">sampling</span><span class="w"> </span><span class="n">rate</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">our</span><span class="w"> </span><span class="n">dataset</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="n">kHz</span><span class="w"></span>
-<span class="w">    </span><span class="mf">3.</span><span class="w"> </span><span class="n">Split</span><span class="w"> </span><span class="n">stereo</span><span class="w"> </span><span class="n">channels</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">mono</span><span class="w"></span>
-<span class="w">    </span><span class="mf">4.</span><span class="w"> </span><span class="n">Remove</span><span class="w"> </span><span class="n">background</span><span class="w"> </span><span class="n">noise</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">audio</span><span class="w"></span>
-<span class="w">    </span><span class="mf">5.</span><span class="w"> </span><span class="n">Remove</span><span class="w"> </span><span class="n">periods</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">silence</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">audio</span><span class="w"></span>
-</code></pre></div>
-
-<h2>References:</h2>
-<p>Librosa blog on resampling:</p>
-<p>https://librosa.org/blog/2019/07/17/resample-on-load/</p>
-<p>Amazing series of YouTube videos on audio processing:</p>
-<p>https://www.youtube.com/watch?v=iCwMQJnKk2c&amp;list=PL-wATfeyAMNqIee7cH3q1bh4QJFAaeNv0</p>                </article>
-            </aside><!-- /#featured -->
-                <section id="content" class="body">
-                    <h1>Other articles</h1>
-                    <hr />
-                    <ol id="posts-list" class="hfeed">
+</footer><!-- /.post-info -->                <p>Descrition of project from beginning to end.</p>
+                <a class="readmore" href="https://Audio-Capstone.github.io/README.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
 
             <li><article class="hentry">
                 <header>
@@ -123,28 +253,6 @@ https://www.ffmpeg.org/download.html</p>
 <p>tags: <a href="https://Audio-Capstone.github.io/tag/python-audio.html">python audio</a> </p>
 </footer><!-- /.post-info -->                <p>Gather audio data to use for analysis in speaker detection technology.</p>
                 <a class="readmore" href="https://Audio-Capstone.github.io/data_processing.html">read more</a>
-                </div><!-- /.entry-content -->
-            </article></li>
-
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="https://Audio-Capstone.github.io/data_exploration.html" rel="bookmark"
-                           title="Permalink to Audio Data Exploration">Audio Data Exploration</a></h1>
-                </header>
-
-                <div class="entry-content">
-<footer class="post-info">
-        <abbr class="published" title="2022-05-14T14:50:00-04:00">
-                Published: Sat 14 May 2022
-        </abbr>
-
-        <address class="vcard author">
-                By                         <a class="url fn" href="https://Audio-Capstone.github.io/author/scott-petersen-and-daniel-babcock.html">Scott Petersen and Daniel Babcock</a>
-        </address>
-<p>In <a href="https://Audio-Capstone.github.io/category/speaker-detection.html">speaker detection</a>.</p>
-<p>tags: <a href="https://Audio-Capstone.github.io/tag/python-audio.html">python audio</a> </p>
-</footer><!-- /.post-info -->                <p>Exploring data structure and features of a .wav file.</p>
-                <a class="readmore" href="https://Audio-Capstone.github.io/data_exploration.html">read more</a>
                 </div><!-- /.entry-content -->
             </article></li>
                 </ol><!-- /#posts-list -->
